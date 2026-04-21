@@ -165,3 +165,86 @@ AI 시대의 전환점에서 검색->AGI, AI 커머스, AI-native 인터페이�
 5. 기능이 아닌 전체 경험에서 승부
 6. 오픈소스가 파괴적 혁신의 촉매
 7. 저항은 기회의 신호 (프라이버시, 에이전시)
+
+---
+
+## Environment Setup (다른 디바이스에서 시작할 때)
+
+이 프로젝트를 다른 머신(새 노트북, 다른 OS 등)에서 GitHub 클론 후 즉시 동일한 환경으로 작업할 수 있도록 필요한 셋업을 기록한다. 환경이 어긋나면 아리의 행동과 스킬이 달라지므로, 반드시 아래 순서를 지킬 것.
+
+### 0. Prerequisites (필수 도구)
+| 도구 | 최소 버전 | 설치/확인 |
+|------|----------|---------|
+| Git | 2.30+ | `git --version` |
+| Node.js | 20 LTS+ | `node -v` (Claude Code CLI가 요구) |
+| Claude Code CLI | 최신 | `npm i -g @anthropic-ai/claude-code` → `claude --version` |
+| GitHub 인증 | — | `gh auth login` 또는 SSH 키 등록 |
+
+> 현재 Discovery & Research 단계라 앱 런타임(Flutter, Next.js 등)은 불필요하다. MVP 빌드 단계 진입 시 이 표에 추가한다.
+
+### 1. 저장소 Clone
+```bash
+git clone https://github.com/unknownstarter/project-nworld.git
+cd project-nworld
+```
+
+### 2. Claude Code 실행
+```bash
+claude
+```
+`CLAUDE.md`가 자동 로드되어 **아리(Ari) 페르소나**, 노아님 호칭 규칙, 팀 역할 스킬 매핑이 즉시 적용된다.
+
+### 3. 프로젝트 전용 스킬 (47개, 자동 동기화)
+- `.claude/skills/` 폴더에 프로젝트 전용 스킬 47개가 git으로 관리된다.
+- Clone 즉시 `/brainstorming`, `/vibe-coder`, `/ai-developer`, `/product-designer` 등이 모두 사용 가능.
+- **주의:** 이 폴더에 직접 스킬을 추가/수정하면 팀 전체에 전파된다. 개인 실험용 스킬은 `~/.claude/skills/`(글로벌)에 둘 것.
+
+### 4. Claude Code 플러그인 (권장)
+다음 플러그인을 활성화하면 CLAUDE.md에서 참조하는 고급 워크플로우가 제대로 동작한다. Claude Code 안에서 `/plugins` 명령으로 설치한다.
+
+| 플러그인 | 용도 |
+|---------|------|
+| `superpowers` | 브레인스토밍·TDD·체계적 디버깅·플랜 실행 등 메타 워크플로우 |
+| `claude-md-management` | CLAUDE.md 감사 및 개선 |
+| `feature-dev` | 가이드형 피처 개발 (탐색→설계→구현→리뷰) |
+| `code-review` | PR 코드 리뷰 |
+| `frontend-design` | 고품질 프론트엔드 UI 생성 |
+| `ralph-loop` | 반복 루프 실행 |
+| `supabase` | Supabase DB/Auth/Edge Functions 통합 |
+
+### 5. 로컬 개인 설정 (디바이스별)
+- `.claude/settings.local.json` — **git에서 제외됨.** 디바이스별 권한 allowlist.
+- 처음 실행하면 비어있는 상태이며, 아리가 작업 중 필요한 도구 권한을 요청하면 노아님이 승인하는 과정에서 자동으로 채워진다.
+- 다른 머신에서 사용하던 권한 목록이 필요하면, 해당 파일을 USB/보안 채널로 직접 복사해 와서 붙여넣을 것.
+
+### 6. 환경 변수 (.env)
+- 현재 단계에서는 불필요. 외부 API 키, DB URL 등이 필요 없다.
+- MVP 빌드 단계로 넘어가면 `.env.example`을 추가하고 이 섹션을 갱신한다.
+
+### 7. 주요 디렉터리 구조
+```
+project-nworld/
+├── CLAUDE.md                 # 아리 페르소나 + 프로젝트 규칙 (이 문서)
+├── README.md                 # 프로젝트 비전/요약
+├── docs/
+│   ├── research/             # 리서치 자료 (시장/기술/사용자)
+│   ├── specs/                # 기능 스펙 (MVP부터 사용)
+│   └── retrospectives/       # 회고록 (KPT, 5 Whys)
+├── .claude/
+│   ├── skills/               # 프로젝트 전용 스킬 47개 (git 관리)
+│   └── settings.local.json   # 로컬 권한 (git 제외)
+└── .gitignore
+```
+
+### 8. 셋업 검증 체크리스트
+다른 디바이스에서 아래가 모두 통과해야 "환경이 동일하다"고 판단한다.
+- [ ] `claude` 실행 시 CLAUDE.md 로드 확인 (아리가 "노아님"으로 호칭하는지)
+- [ ] `/brainstorming` 같은 프로젝트 스킬이 목록에 뜨는지
+- [ ] `superpowers` 플러그인의 `brainstorming`/`tdd`/`systematic-debugging` 등이 뜨는지
+- [ ] `docs/research/` 아래 문서들이 읽히는지
+- [ ] `git status` 결과가 clean (clone 직후 아무것도 수정 안 된 상태)
+
+### 9. 셋업 문제 발생 시
+- 스킬이 안 보이면: `ls .claude/skills/` 로 47개 폴더가 있는지 먼저 확인. 없으면 `.gitignore`가 `.claude/` 전체를 다시 막고 있는지 의심.
+- 플러그인이 안 뜨면: Claude Code 재시작 후 `/plugins` 로 설치 상태 점검.
+- 권한 프롬프트가 과도하게 뜨면: 이전 디바이스의 `.claude/settings.local.json`을 복사해 오거나, 작업하며 점진적으로 허용.

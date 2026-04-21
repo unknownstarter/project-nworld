@@ -6,6 +6,8 @@ node_modules/
 *.log
 dist/
 .next/
-.claude/
+# .claude/ 디렉터리 전체가 아니라, 디바이스별 로컬 설정만 제외
+# (프로젝트 전용 스킬은 .claude/skills/ 아래에 있으므로 git에 포함되어야 한다)
+.claude/settings.local.json
 CLAUDE.local.md
 docs/milkyway/
